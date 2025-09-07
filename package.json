@@ -1,58 +1,23 @@
 {
-  "name": "JOEL-XMD",
+  "name": "joel-xmd",
+  "version": "1.0.0",
   "description": "WhatsApp Bot with media download and AI features",
-  "logo": "https://i.ibb.co/qYtzFsVp/shaban-md.jpg",
-  "keywords": ["WhatsApp Bot", "JOEL-XMD", "Baileys", "MegaJS"],
-  "success_url": "/",
-  "stack": "heroku-24",
-  "env": {
-    "SESSION_ID": {
-      "description": "Put your Baileys SESSION_ID here. Example: JOEL-XMD~Z6gSFLrT#x8BQLYPFSkkjE...",
-      "required": true,
-      "value": ""
-    },
-    "BOT_OWNER_NUMBER": {
-      "description": "Owner number for bot messages",
-      "required": true,
-      "value": "255781144539"
-    },
-    "BOT_PREFIX": {
-      "description": "Bot command prefix, e.g., .",
-      "required": false,
-      "value": "."
-    },
-    "AUTO_STATUS_REACT": {
-      "description": "Set true for auto react to status",
-      "required": true,
-      "value": "true"
-    },
-    "AUTO_STATUS_REPLY": {
-      "description": "Set true for auto reply to status",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_STATUS_MSG": {
-      "description": "Message for status auto reply",
-      "required": true,
-      "value": "*Joel XMD viewed your status!*"
-    },
-    "ALWAYS_ONLINE": {
-      "description": "Set true to always appear online",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_TYPING": {
-      "description": "Set true to auto typing",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_RECORDING": {
-      "description": "Set true to auto recording presence",
-      "required": true,
-      "value": "false"
-    }
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node sever.js",
+    "dev": "nodemon sever.js"
   },
-  "buildpacks": [
-    { "url": "heroku/nodejs" }
-  ]
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.4.0",
+    "axios": "^1.6.7",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "megajs": "^1.0.0",
+    "moment-timezone": "^0.5.43",
+    "pino": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
