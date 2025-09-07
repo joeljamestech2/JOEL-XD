@@ -1,169 +1,39 @@
 {
   "name": "Joel-XMD",
-  "description": "Javascript WhatsApp bot powered by Joel James",
-  "logo": "https://raw.githubusercontent.com/joeljamestech2/JOEL-XMD/refs/heads/main/joel-xmd-medias/menu.jpg",
-  "keywords": ["Joel-XMD", "WhatsApp Bot", "Baileys", "joeljamestech"],
+  "description": "WhatsApp bot powered by Joel XMD",
+  "repository": "https://github.com/joeljamestech2/JOEL-XD",
+  "logo": "https://i.ibb.co/ZYW3VTp/placeholder.png",
+  "keywords": ["WhatsApp", "bot", "JoelXMD"],
   "success_url": "/",
   "stack": "container",
   "env": {
     "SESSION_ID": {
-      "description": "Put your Baileys session-id here (Base64).",
-      "required": true,
-      "value": ""
-    },
-    "STICKER_NAME": {
-      "description": "Type your sticker pack name.",
-      "required": false,
-      "value": "Joel-XMD"
-    },
-    "OWNER_NAME": {
-      "description": "Type Bot Owner Name.",
-      "required": false,
-      "value": "LORD_JOEL"
+      "description": "Put your Baileys session-id here (Base64, starting with JOEL-XMD~).",
+      "required": true
     },
     "OWNER_NUMBER": {
-      "description": "Put the owner number for bot.",
-      "required": false,
-      "value": "255781144539"
-    },
-    "MENU_IMAGE_URL": {
-      "description": "Add image URL for menu and mention replies.",
-      "required": true,
-      "value": "https://raw.githubusercontent.com/joeljamestech2/JOEL-XMD/refs/heads/main/joel-xmd-medias/menu.jpg"
+      "description": "Owner WhatsApp number with country code.",
+      "required": true
     },
     "PREFIX": {
-      "description": "Paste your bot prefix. Avoid null prefix.",
+      "description": "Bot command prefix.",
       "required": false,
       "value": "."
     },
-    "MODE": {
-      "description": "Bot work mode: public / private / inbox / group.",
-      "required": false,
-      "value": "public"
-    },
     "ALWAYS_ONLINE": {
-      "description": "Set true if you want always online mode.",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_STATUS_SEEN": {
-      "description": "Set true to auto-view statuses.",
-      "required": true,
-      "value": "true"
-    },
-    "AUTO_STATUS_REACT": {
-      "description": "Set true to auto-react to status.",
-      "required": true,
-      "value": "true"
-    },
-    "AUTO_STATUS_REPLY": {
-      "description": "Set true for automatic replies to status.",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_STATUS_MSG": {
-      "description": "Message to send on status auto-reply.",
-      "required": true,
-      "value": "*Seen your status - Joel-XMD 🤖*"
-    },
-    "BOT_NAME": {
-      "description": "Type the bot name here.",
-      "required": false,
-      "value": "Joel-XMD"
-    },
-    "DELETE_LINK": {
-      "description": "Set true to delete group links automatically.",
-      "required": true,
-      "value": "false"
-    },
-    "ANTI_LINK": {
-      "description": "Set true to remove members posting group links.",
-      "required": true,
-      "value": "false"
-    },
-    "ANTI_MEDIA": {
-      "description": "Set true to remove members posting medias in group.",
-      "required": true,
-      "value": "false"
-    },
-    "MENTION_REPLY": {
-      "description": "Set true for if someone tags you in group bot will send audio asking why they tagged.",
-      "required": true,
-      "value": "false"
-    },
-    "ADMIN_EVENTS": {
-      "description": "Set true to notify when admins promote/demote.",
-      "required": true,
-      "value": "false"
-    },
-    "WELCOME": {
-      "description": "Set true to enable welcome/goodbye messages.",
-      "required": true,
-      "value": "false"
-    },
-    "ANTI_CALL": {
-      "description": "Set true to auto-reject calls.",
-      "required": true,
-      "value": "false"
-    },
-    "ANTI_BAD_WORD": {
-      "description": "Set true to auto-delete bad words.",
-      "required": true,
-      "value": "false"
-    },
-    "AUTO_RECORDING": {
-      "description": "Set true to enable auto-recording presence.",
+      "description": "Set true for always online mode.",
       "required": true,
       "value": "false"
     },
     "AUTO_TYPING": {
-      "description": "Set true to enable auto-typing presence.",
+      "description": "Enable auto typing presence.",
       "required": true,
       "value": "false"
     },
-    "AUTO_REACT": {
-      "description": "Set true to react to every message.",
+    "AUTO_RECORDING": {
+      "description": "Enable auto recording presence.",
       "required": true,
       "value": "false"
-    },
-    "CUSTOM_REACT": {
-      "description": "Set true to enable custom emoji reactions.",
-      "required": true,
-      "value": "false"
-    },
-    "CUSTOM_REACT_EMOJIS": {
-      "description": "Custom emojis to use in reactions.",
-      "required": false,
-      "value": "💝,💖,💗,❤️‍🩹,❤️,🧡,💛,💚,💙,💜,🤎,🖤,🤍"
-    },
-    "ANTI_DEL_PATH": {
-      "description": "Use 'same' to resend deleted msg in same chat, otherwise 'inbox'.",
-      "required": true,
-      "value": "inbox"
-    },
-    "ANTI_DELETE": {
-      "description": "Set true to show deleted messages.",
-      "required": true,
-      "value": "false"
-    },
-    "READ_MESSAGE": {
-      "description": "Set true to mark all messages as read.",
-      "required": true,
-      "value": "false"
-    },
-    "HEROKU_API": {
-      "description": "Heroku API token",
-      "required": true
-    },
-    "HEROKU_APP": {
-      "description": "Heroku App name",
-      "required": true
     }
-  },
-  "buildpacks": [
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
-    }
-  ],
-  "stack": "heroku-24"
+  }
 }
