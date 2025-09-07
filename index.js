@@ -1,172 +1,100 @@
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, delay, generateWAMessageFromContent, proto } = require('@whiskeysockets/baileys');
+/**
+ * Joel XMD WhatsApp Bot
+ * Author: LORD_JOEL
+ */
+
+const { default: makeWASocket, DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, makeInMemoryStore, delay } = require('@whiskeysockets/baileys');
+const P = require('pino');
 const fs = require('fs');
+const { SESSION_ID, BOT_NAME, OWNER_NUMBER, PREFIX, AUTO_TYPING, AUTO_RECORDING, ALWAYS_ONLINE, MENU_IMAGE_URL, AUTO_STATUS_MSG } = require('./config.js');
 const Mega = require('megajs');
-const config = require('./config');
 
-// Utility: convert string to boolean
-const toBool = (val) => val === 'true';
+const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 
-// Random emoji reaction
-const randomEmoji = () => {
-    if (!config.CUSTOM_REACT || !config.CUSTOM_REACT_EMOJIS) return '❤️';
-    const emojis = config.CUSTOM_REACT_EMOJIS.split(',');
-    return emojis[Math.floor(Math.random() * emojis.length)];
-};
+function parseSessionId(sessionId) {
+    if(!sessionId.startsWith(`${BOT_NAME}~`)) throw new Error('Invalid session ID format!');
+    const base64Data = sessionId.split('~')[1];
+    const buffer = Buffer.from(base64Data, 'base64');
+    return JSON.parse(buffer.toString());
+}
 
 async function startBot() {
-    // Download session from Mega if not exists
-    if (!fs.existsSync('auth_info.json')) {
-        console.log('Downloading auth_info.json from Mega...');
-        const file = new Mega.File({ fileId: 'YOUR_MEGA_FILE_ID', key: 'YOUR_MEGA_FILE_KEY' });
+    try {
+        const { version } = await fetchLatestBaileysVersion();
+        const auth = parseSessionId(SESSION_ID);
 
-        await file.download().then(stream => {
-            let data = '';
-            stream.on('data', chunk => data += chunk.toString());
-            stream.on('end', () => {
-                fs.writeFileSync('auth_info.json', data);
-                console.log('Session loaded from Mega!');
-            });
+        const sock = makeWASocket({
+            logger: P({ level: 'silent' }),
+            auth,
+            printQRInTerminal: true,
+            browser: [BOT_NAME, 'Chrome', '1.0.0'],
+            version
         });
-    }
 
-    // Load auth state
-    const { state, saveCreds } = await useMultiFileAuthState('./auth_info.json');
-    const { version } = await fetchLatestBaileysVersion();
+        store.bind(sock.ev);
 
-    // Create socket
-    const sock = makeWASocket({
-        version,
-        auth: state,
-        printQRInTerminal: true,
-        browser: ['Joel XMD', 'Chrome', '1.0']
-    });
+        // Auto presence
+        sock.ev.on('presence.update', async (update) => {
+            if(ALWAYS_ONLINE === 'true') {
+                await sock.sendPresenceUpdate('available');
+            }
+        });
 
-    sock.ev.on('creds.update', saveCreds);
+        if(AUTO_TYPING === 'true') sock.sendPresenceUpdate('composing');
+        if(AUTO_RECORDING === 'true') sock.sendPresenceUpdate('recording');
 
-    // Connection update
-    sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect } = update;
-        if (connection === 'close') {
-            const reason = (lastDisconnect.error)?.output?.statusCode;
-            if (reason !== DisconnectReason.loggedOut) startBot();
-            else console.log('Logged out. Re-scan QR.');
-        } else if (connection === 'open') {
-            console.log('Joel XMD connected successfully!');
-            // Notify owner
-            if (config.OWNER_NUMBER) {
-                sock.sendMessage(config.OWNER_NUMBER + '@s.whatsapp.net', { 
-                    text: 'Joel XMD is connected successfully, enjoy!' 
+        // Connection events
+        sock.ev.on('connection.update', async (update) => {
+            const { connection, lastDisconnect } = update;
+            if(connection === 'close') {
+                const reason = lastDisconnect?.error?.output?.statusCode;
+                console.log('Disconnected. Reason:', reason);
+                startBot();
+            } else if(connection === 'open') {
+                console.log(`${BOT_NAME} connected successfully!`);
+
+                // Send startup message
+                await sock.sendMessage(OWNER_NUMBER + '@s.whatsapp.net', {
+                    text: `${BOT_NAME} is connected successfully! Enjoy.`
                 });
             }
-        }
-    });
+        });
 
-    // Auto presence & status
-    setInterval(async () => {
-        if (toBool(config.ALWAYS_ONLINE)) await sock.sendPresenceUpdate('available');
-        if (toBool(config.AUTO_TYPING)) await sock.sendPresenceUpdate('composing');
-        if (toBool(config.AUTO_RECORDING)) await sock.sendPresenceUpdate('recording');
-    }, 15000);
+        // Message handler
+        sock.ev.on('messages.upsert', async ({ messages, type }) => {
+            const msg = messages[0];
+            if(!msg.message || msg.key.fromMe) return;
+            const text = msg.message.conversation || msg.message.extendedTextMessage?.text || '';
+            const from = msg.key.remoteJid;
 
-    // Listen messages
-    sock.ev.on('messages.upsert', async (m) => {
-        const msg = m.messages[0];
-        if (!msg.message || msg.key.fromMe) return;
+            // Commands
+            if(text.startsWith(PREFIX)) {
+                const cmd = text.slice(PREFIX.length).trim().split(/ +/).shift().toLowerCase();
 
-        const jid = msg.key.remoteJid;
-        const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
-        if (!text) return;
-
-        const prefix = config.PREFIX || '.';
-        const cmd = text.startsWith(prefix) ? text.slice(prefix.length).trim().split(' ')[0].toLowerCase() : null;
-
-        // Commands
-        switch(cmd) {
-            case 'ping':
-                await sock.sendMessage(jid, { text: 'Pong! Joel XMD is active ✅' });
-                break;
-            case 'alive':
-                await sock.sendMessage(jid, { text: `💡 *${config.BOT_NAME}* is online!\nOwner: ${config.OWNER_NAME}` });
-                break;
-            case 'menu':
-                await sock.sendMessage(jid, { 
-                    text: `📜 *Joel XMD Menu*\nCommands:\n- .ping\n- .alive\n- .menu\n- .autotyping\n- .autorecording\n- .alwaysonline\n- .wapresence\n\nFeatures:\n- Auto Typing: ${config.AUTO_TYPING}\n- Auto Recording: ${config.AUTO_RECORDING}\n- Always Online: ${config.ALWAYS_ONLINE}\n- Auto Status Seen: ${config.AUTO_STATUS_SEEN}\n- Auto Status React: ${config.AUTO_STATUS_REACT}\n- Auto Status Reply: ${config.AUTO_STATUS_REPLY}` 
-                });
-                break;
-            case 'autotyping':
-                await sock.sendMessage(jid, { text: `Auto typing is ${config.AUTO_TYPING}` });
-                break;
-            case 'autorecording':
-                await sock.sendMessage(jid, { text: `Auto recording is ${config.AUTO_RECORDING}` });
-                break;
-            case 'alwaysonline':
-                await sock.sendMessage(jid, { text: `Always online is ${config.ALWAYS_ONLINE}` });
-                break;
-            case 'wapresence':
-                await sock.sendMessage(jid, { 
-                    text: `📊 Presence status:\nTyping: ${config.AUTO_TYPING}\nRecording: ${config.AUTO_RECORDING}\nOnline: ${config.ALWAYS_ONLINE}` 
-                });
-                break;
-            default:
-                break;
-        }
-
-        // Auto-status features
-        if (toBool(config.AUTO_STATUS_SEEN)) sock.readMessages([msg.key]);
-        if (toBool(config.AUTO_STATUS_REACT)) sock.sendMessage(jid, { react: { text: randomEmoji(), key: msg.key } });
-        if (toBool(config.AUTO_STATUS_REPLY)) sock.sendMessage(jid, { text: config.AUTO_STATUS_MSG });
-
-        // Auto-sticker reply
-        if (toBool(config.AUTO_STICKER) && msg.message.conversation) {
-            await sock.sendMessage(jid, { sticker: { url: 'https://i.ibb.co/YourSticker.webp' } });
-        }
-
-        // Auto-voice reply
-        if (toBool(config.AUTO_VOICE) && msg.message.conversation) {
-            await sock.sendMessage(jid, { audio: { url: 'https://i.ibb.co/YourAudio.mp3' }, mimetype: 'audio/mpeg' });
-        }
-
-        // Anti-link
-        if (toBool(config.ANTI_LINK) && text.includes('https://chat.whatsapp.com/')) {
-            await sock.sendMessage(jid, { text: '⚠️ Group links are not allowed!' });
-        }
-
-        // Mention reply
-        if (toBool(config.MENTION_REPLY) && msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(sock.user.id)) {
-            await sock.sendMessage(jid, { text: `You mentioned me! 👋` });
-        }
-
-        // Anti-bad word (example)
-        if (toBool(config.ANTI_BAD)) {
-            const badWords = ['badword1','badword2'];
-            if (badWords.some(w => text.toLowerCase().includes(w))) {
-                await sock.sendMessage(jid, { text: '⚠️ Please avoid bad words!' });
-            }
-        }
-
-        // Anti-delete
-        if (toBool(config.ANTI_DELETE)) {
-            sock.ev.on('messages.delete', async (msgDel) => {
-                const deletedMsg = msgDel.keys[0];
-                if (deletedMsg.remoteJid === jid) {
-                    await sock.sendMessage(jid, { text: `⚠️ Message deleted: ${deletedMsg.id}` });
+                if(cmd === 'ping') {
+                    await sock.sendMessage(from, { text: `🏓 Pong!` });
+                } else if(cmd === 'alive') {
+                    await sock.sendMessage(from, { text: `${BOT_NAME} is alive!\n${AUTO_STATUS_MSG}` });
+                } else if(cmd === 'menu') {
+                    await sock.sendMessage(from, { image: { url: MENU_IMAGE_URL }, caption: `*${BOT_NAME} Menu*\n\n- ping\n- alive\n- menu\n- auto typing\n- auto recording\n- always online\n- wapresence` });
+                } else if(cmd === 'wapresence') {
+                    await sock.sendMessage(from, { text: `Auto Presence Status:` +
+                        `\n- Auto Typing: ${AUTO_TYPING}` +
+                        `\n- Auto Recording: ${AUTO_RECORDING}` +
+                        `\n- Always Online: ${ALWAYS_ONLINE}` });
                 }
-            });
-        }
+            }
+        });
 
-        // Auto-react to every message
-        if (toBool(config.AUTO_REACT)) sock.sendMessage(jid, { react: { text: randomEmoji(), key: msg.key } });
-    });
+        // MegaJS example
+        // const file = Mega.File({ url: 'https://mega.nz/file/...yourfile...' });
+        // await file.loadAttributes();
+        // console.log(file.name, file.size);
 
-    // Admin events
-    sock.ev.on('group-participants.update', async (update) => {
-        if (!toBool(config.ADMIN_EVENTS)) return;
-        const { participants, action, jid } = update;
-        for (let user of participants) {
-            if (action === 'add') await sock.sendMessage(jid, { text: `Welcome @${user.split('@')[0]}! 🎉` });
-            else if (action === 'remove') await sock.sendMessage(jid, { text: `Goodbye @${user.split('@')[0]}! 👋` });
-        }
-    });
+    } catch(err) {
+        console.log('Error in startBot:', err);
+        setTimeout(startBot, 5000);
+    }
 }
 
 startBot();
