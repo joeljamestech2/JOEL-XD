@@ -1,0 +1,71 @@
+services:
+  - type: web
+    name: JOEL-XMD
+    env: node
+    plan: free
+    repo: https://github.com/joeljamestech2/JOEL-XMD
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: SESSION_ID
+        sync: false
+      - key: OWNER_NUMBER
+        sync: false
+      - key: STICKER_NAME
+        sync: false
+      - key: PREFIX
+        sync: false
+      - key: MODE
+        sync: false
+      - key: ALWAYS_ONLINE
+        sync: false
+      - key: AUTO_VOICE
+        sync: false
+      - key: AUTO_REPLY
+        sync: false
+      - key: AUTO_STICKER
+        sync: false
+      - key: AUTO_STATUS_SEEN
+        sync: false
+      - key: AUTO_STATUS_REACT
+        sync: false
+      - key: AUTO_STATUS_REPLY
+        sync: false
+      - key: DELETE_LINK
+        sync: false
+      - key: ANTI_LINK
+        sync: false
+      - key: ADMIN_EVENTS
+        sync: false
+      - key: WELCOME
+        sync: false
+      - key: ANTI_CALL
+        sync: false
+      - key: ANTI_BAD_WORD
+        sync: false
+      - key: AUTO_RECORDING
+        sync: false
+      - key: AUTO_TYPING
+        sync: false
+      - key: AUTO_REACT
+        sync: false
+      - key: CUSTOM_REACT
+        sync: false
+      - key: ANTI_DEL_PATH
+        sync: false
+      - key: ANTI_DELETE
+        sync: false
+      - key: READ_MESSAGE
+        sync: false
+      - key: BOT_NAME
+        sync: false
+      - key: OWNER_NAME
+        sync: false
+      - key: MENU_IMAGE_URL
+        sync: false
+      - key: LIVE_MSG
+        sync: false
+      - key: ALIVE_IMG
+        sync: false

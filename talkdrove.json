@@ -1,0 +1,146 @@
+{
+  "bot-name": "JOEL-XMD",
+  "description": "Whiskey Sockets Baileys WhatsApp Bot by LORD_JOEL",
+  "logo": "https://raw.githubusercontent.com/joeljamestech2/JOEL-XMD/refs/heads/main/media/menu.jpg",
+  "keywords": ["WhatsApp Bot", "Baileys", "Joel XMD"],
+  "documentation-link": "https://joel-xmd-bot.onrender.com/",
+  "owner-verification": "lordjoel@example.com",
+  
+  "env": {
+    "SESSION_ID": {
+      "description": "Put your SESSION_ID here. Make sure it starts with JOEL-XMD~ or get session id from https://joel-xmd-bot.onrender.com/",
+      "value": "",
+      "required": true
+    },
+    "PREFIX": {
+      "description": "Bot command prefix (e.g., . , ! @ etc)",
+      "value": ".",
+      "required": true
+    },
+    "MENU_IMAGE_URL": {
+      "description": "Add URL for mention reply and menu if you want.",
+      "required": true,
+      "value": "https://raw.githubusercontent.com/joeljamestech2/JOEL-XMD/refs/heads/main/media/menu.jpg"
+    },
+    "OWNER_NAME": {
+      "description": "Type Bot Owner Name.",
+      "required": false,
+      "value": "LORD_JOEL"
+    },
+    "OWNER_NUMBER": {
+      "description": "Put the owner number for bot.",
+      "required": false,
+      "value": "255781144539"
+    },
+    "STICKER_NAME": {
+      "description": "Type your sticker pack name.",
+      "required": false,
+      "value": "JOEL-XMD"
+    },
+    "MODE": {
+      "description": "Select bot work type: public/private/inbox/group.",
+      "required": true,
+      "value": "public"
+    },
+    "ALWAYS_ONLINE": {
+      "description": "Set true if you want always online.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_VOICE": {
+      "description": "Set true if you want automatic voice reply.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_REPLY": {
+      "description": "Set true if you want automatic reply.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_STICKER": {
+      "description": "Set true if you want automatic sticker.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_STATUS_REACT": {
+      "description": "Set true for automatic status react & seen.",
+      "required": true,
+      "value": "true"
+    },
+    "AUTO_STATUS_REPLY": {
+      "description": "Set true for auto reply message on status seen.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_STATUS_MSG": {
+      "description": "Type custom message on status reply",
+      "required": true,
+      "value": "*👁️ Seen your status - JOEL-XMD*"
+    },
+    "BOT_NAME": {
+      "description": "Type here the bot name.",
+      "required": false,
+      "value": "JOEL-XMD"
+    },
+    "ANTI_LINK": {
+      "description": "Set true if you want bot to auto remove group links.",
+      "required": true,
+      "value": "true"
+    },
+    "ANTI_BAD": {
+      "description": "Set true if you want bot to auto delete bad words.",
+      "required": false,
+      "value": "false"
+    },
+    "DESCRIPTION": {
+      "description": "Add caption for menu and others.",
+      "required": false,
+      "value": "*© Powered by LORD_JOEL*"
+    },
+    "AUTO_RECORDING": {
+      "description": "Set true if you want auto recording.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_TYPING": {
+      "description": "Set true if you want auto typing.",
+      "required": true,
+      "value": "false"
+    },
+    "AUTO_REACT": {
+      "description": "Set true if you want bot to react on every message.",
+      "required": true,
+      "value": "false"
+    },
+    "ADMIN_EVENTS": {
+      "description": "Set true if you want to know who promoted/demoted a member.",
+      "required": true,
+      "value": "false"
+    },
+    "WELCOME": {
+      "description": "Set true if you want welcome/goodbye messages in groups.",
+      "required": true,
+      "value": "false"
+    },
+    "ANTI_CALL": {
+      "description": "Set true if you want bot to auto reject calls.",
+      "required": true,
+      "value": "false"
+    },
+    "ANTI_DEL_PATH": {
+      "description": "Use 'same' to resend deleted message in same chat, otherwise 'inbox'.",
+      "required": true,
+      "value": "inbox"
+    },
+    "ANTI_DELETE": {
+      "description": "Set true to show deleted messages.",
+      "required": true,
+      "value": "false"
+    },
+    "READ_MESSAGE": {
+      "description": "Set true if you want bot to read all messages.",
+      "required": true,
+      "value": "false"
+    }
+  }
+}
